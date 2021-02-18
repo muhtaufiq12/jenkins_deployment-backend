@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{.Chart.Name}}-deployment"
+  namespace: {{.Values.app.namespace}}
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: {{.Chart.Name}}
+  template:
+    metadata:
+      name: {{.Chart.Name}}
+      labels:
+        app: {{.Chart.Name}}
+    spec:
+      containers:
+      - name: {{.Chart.Name}}
+        image: "{{.Values.image.name}}:{{.Chart.AppVersion}}"
+        imagePullPolicy: Always
+        ports:
+        - name: app
+          containerPort: {{.Values.app.port}}
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "512m"
+          limits:
+            memory: "512Mi"
+            cpu: "512m"
+        volumeMounts:
+        - mountPath: /app/application.properties
+          subPath: application.properties
+          name: config-storage
+      volumes:
+      - name: config-storage
+        configMap:
+          defaultMode: 420
+          name: "{{.Chart.Name}}-configmap"
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        operator: Exists
+        effect: NoSchedule

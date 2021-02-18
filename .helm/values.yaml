@@ -1,0 +1,9 @@
+replicaCount: 1
+image:
+  name: "taufiq12/apps-blimart-backend"
+app:
+  namespace: "bliblimart"
+  port: 8080
+  ingress:
+    enable: true
+    host: "backend.blimart.com"
